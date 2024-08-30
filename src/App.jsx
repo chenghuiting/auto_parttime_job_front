@@ -5,13 +5,13 @@ import axios from 'axios';
 import AppWrap from './style';
 
 const App = memo(() => {
-  const [messageApi, contextHolder] = message.useMessage();
-  const [cardPwd, setCardPwd] = useState((window.location.search).split('=')[1])
+  const [messageApi] = message.useMessage();
+  const [cardPwd] = useState((window.location.search).split('=')[1])
 
   function onFinish(values) {
     console.log(values);
     // 将输入的内容提交到后台
-    axios.post(`http://124.222.46.46:8900/wx/send/text/msg`, values).then(res => {
+    axios.post(`http://122.51.106.147:8900/wx/send/text/msg`, values).then(res => {
       if (res.data.code === 0) {
         messageApi.open({
           type: 'success',
