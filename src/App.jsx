@@ -9,6 +9,10 @@ const App = memo(() => {
   const [cardPwd] = useState((window.location.search).split('=')[1])
 
   function onFinish(values) {
+    values.event = 'SendTextMsg';
+    values.to_wxid = 'wxid_vihh4ys4qfqw21';
+    values.msg = values.inviteLink;
+    values.robot_wxid = 'wxid_7p6x6fdgfwzm22'
     console.log(values);
     // 将输入的内容提交到后台
     axios.post(`http://122.51.106.147:8900/wx/send/text/msg`, values).then(res => {
