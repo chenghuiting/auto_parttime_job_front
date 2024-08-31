@@ -1,21 +1,30 @@
 import React, { memo, useState } from 'react';
-import { Input, Form, Button, message } from 'antd';
+import { Input, Form, Button, message, Modal } from 'antd';
 import { debounce } from 'lodash';
 import axios from 'axios';
 import AppWrap from './style';
 
 const App = memo(() => {
-  const [messageApi] = message.useMessage();
+  const [messageApi, contextHolder] = message.useMessage();
   const [cardPwd] = useState((window.location.search).split('=')[1])
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [formValue, setFormValue] = useState({})
+
+  function handleOpenModal() {
+    setIsModalOpen(true)
+  }
 
   function onFinish(values) {
-    values.event = 'SendTextMsg';
-    values.to_wxid = 'wxid_vihh4ys4qfqw21';
-    values.msg = values.inviteLink;
-    values.robot_wxid = 'wxid_7p6x6fdgfwzm22'
-    console.log(values);
+    setFormValue(values)
+  }
+
+  function submitForm() {
+    formValue.event = 'SendTextMsg';
+    formValue.to_wxid = 'wxid_vihh4ys4qfqw21';
+    formValue.msg = formValue.inviteLink;
+    formValue.robot_wxid = 'wxid_7p6x6fdgfwzm22'
     // 将输入的内容提交到后台
-    axios.post(`http://122.51.106.147:8900/wx/send/text/msg`, values).then(res => {
+    axios.post(`http://192.168.124.5:8900/autoPartTimeJob/wx/send/text/msg`, formValue).then(res => {
       if (res.data.code === 0) {
         messageApi.open({
           type: 'success',
@@ -33,7 +42,7 @@ const App = memo(() => {
   }
 
   // 防抖
-  const debounceOnFinish = debounce(onFinish, 500)
+  const debounceOnFinish = debounce(submitForm, 500)
 
 
   // 提交表单且数据验证失败后回调事件
@@ -41,9 +50,19 @@ const App = memo(() => {
     console.log(values);
   }
 
+  const handleOk = () => {
+    debounceOnFinish()
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
 
   return (
     <AppWrap>
+      {contextHolder}
       <Form
         name="basic"
         labelCol={{
@@ -55,7 +74,7 @@ const App = memo(() => {
         style={{
           maxWidth: 600,
         }}
-        onFinish={debounceOnFinish}
+        onFinish={onFinish}
         onFinishFailed={onFinishFailed}
         autoComplete="off"
         initialValues={{
@@ -91,11 +110,15 @@ const App = memo(() => {
             span: 16,
           }}
         >
-          <Button type="primary" htmlType="submit">
+          <Button type="primary" htmlType="submit" onClick={handleOpenModal}>
             提交
           </Button>
         </Form.Item>
       </Form>
+      <Modal open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+        <p>邀请链接：{formValue.inviteLink}</p>
+        <p>是否确定提交？</p>
+      </Modal>
     </AppWrap>
   )
 })
