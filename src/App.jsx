@@ -10,11 +10,8 @@ const App = memo(() => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formValue, setFormValue] = useState({})
 
-  function handleOpenModal() {
-    setIsModalOpen(true)
-  }
-
   function onFinish(values) {
+    setIsModalOpen(true)
     setFormValue(values)
   }
 
@@ -110,7 +107,7 @@ const App = memo(() => {
             span: 16,
           }}
         >
-          <Button type="primary" htmlType="submit" onClick={handleOpenModal}>
+          <Button type="primary" htmlType="submit">
             提交
           </Button>
         </Form.Item>
